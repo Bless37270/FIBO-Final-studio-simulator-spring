@@ -14,6 +14,7 @@
 	<script src="Shapes.js"></script>
 	<script src="Projectile.js"></script>
 	<script src="circle.js"></script>
+    <script src="VelocityCalculator.js"></script>
   	
 </head>
 <body>
@@ -47,7 +48,7 @@
             <div class="group-y">
                 <div class="mm3">mm</div>
                 <div class="y">y : <span class="coordinate-of-targety" contenteditable="true"></span></div>
-                <div class="group-y-child"></div>
+                <div class="group-z-child"></div>
                 <div class="div4"></div>
             </div>
             <div class="group-x2">
@@ -58,22 +59,52 @@
             </div>
             <div class="div6">*</div>
         </div>
+
+        <div class="Spring-constant">Spring constant and ∆ x :
+        <div class="group-k">
+            <div class="mm4">N/m</div>
+            <div class="z">k : <span class="coordinate-of-targetk" contenteditable="true"></span></div>
+            <div class="group-k-child "></div>
+            <div class="div11"></div>
+        </div>
+    </div>
+
+    <div class="contraction-distance">
+        <div class="group-kx">
+            <div class="mm5">m</div>
+            <div class="z">∆x : <span class="coordinate-of-targetkx" contenteditable="true"></span></div>
+            <div class="group-kx-child "></div>
+            <div class="div12"></div>
+        </div>
+    </div>
+
+
+
+    <div class="Mass">Mass :
+        <div class="group-m">
+            <div class="mm5">kg</div>
+            <div class="z">m : <span class="coordinate-of-targetm" contenteditable="true"></span></div>
+            <div class="group-m-child "></div>
+            <div class="div12"></div>
+        </div>
+    </div>
+
         <div class="please-fill-in">*please fill in all required fields</div>
         <div class="position-of-machine">Position of Machine : </div>
         <div class="rectangle-parent" id="groupContainer3">
             <div class="group-child"></div>
             <div class="restart">Restart</div>
         </div>
-        <div class="rectangle-group" id="groupContainer4">
+        <!-- <div class="rectangle-group" id="groupContainer4">
             <div class="group-item"></div>
             <div class="Trajection">Trajection</div>
-        </div>
+        </div> -->
         <div class="rectangle-container" id="groupContainer2">
             <div class="group-inner"></div>
             <div class="calculate">Calculate</div>
         </div>
         <div class="rectangle-div"></div>
-        <div class="angle-of-machine">Angle of Machine Should be: </div>
+        <div class="angle-of-machine">Angle of Machine Should be : </div>
         <div class="group-x3">
             <div class="mm5">mm</div>
             <div class="z">x : <span id="resultx"></span></div>
@@ -99,8 +130,8 @@
             <div class="div10"></div>
         </div>
         <div class="output">output :</div>
-        <div class="position-of-machine1">should be moved to the following distance: </div>
-        <div class="group-div">
+        <div class="position-of-machine1">Should be moved to the following distance : </div>
+        <div class="group-div" id="groupContainer5">
             <div class="group-child1"></div>
             <div class="more-details">More details</div>
         </div>
@@ -156,8 +187,16 @@
                 const posX = document.querySelector('.coordinate-of-targetx').innerText.trim();
                 const posY = document.querySelector('.coordinate-of-targety').innerText.trim();
                 const posZ = document.querySelector('.coordinate-of-targetz').innerText.trim();
+                const spring = document.querySelector('.coordinate-of-targetk').innerText.trim();
+                const mass = document.querySelector('.coordinate-of-targetm').innerText.trim();
+                const displacement =document.querySelector('.coordinate-of-targetkx').innerText.trim();
+
                 globalThis.angle = 0;
                 globalThis.velocity = 0;
+                globalThis.spring = 750;
+                globalThis.mass = 0.3;
+                globalThis.displacement = 0.1;
+                console.log('spring');
                 console.log('targetX');
                 console.log(targetX);
                 console.log('targetZ');
@@ -180,7 +219,7 @@
                             
 
                 // Call the async function to fetch data
-                fetchData(targetX, targetZ, posX, posY, posZ, angle, velocity);           
+                fetchData(targetX, targetZ, posX, posY, posZ, angle, velocity, spring, mass);           
          
                 // fetchData_docs(targetX, targetZ, posX, posY, posZ);
             });
@@ -195,7 +234,9 @@
                     posY: posY,
                     posZ: posZ,
                     angle: angle,
-                    velocity: velocity
+                    velocity: velocity,
+                    spring: spring,
+                    mass: mass
                 };
                 // Fetch angle and velocity from FastAPI
                 const googleResponse = await fetch('https://script.google.com/macros/s/AKfycbwd4jtyCLPXNrqrF60leuUMzhovXlpPbY4-T7-jFDqj2LrNIyLVmsAXOWx1e27uCGWTkw/exec', { // Replace with your Google Apps Script Web App URL
@@ -237,7 +278,7 @@
             }
         }
 
-        async function fetchData(targetX, targetZ, posX, posY, posZ, angle, velocity) {
+        async function fetchData(targetX, targetZ, posX, posY, posZ, angle, velocity, spring, mass) {
 
             try {
                 
@@ -275,8 +316,22 @@
         
       
                     
+                if (spring != null && mass > 0 && displacement != null){
+                    let k = spring;
+                    let m = mass;
+                    let x = displacement;
+                    console.log('k:', k);
+                    const calculator = new VelocityCalculator(m, k, x);
+                    const velocity = calculator.calculateVelocity();
+                    console.log(`Velocity: ${velocity.toFixed(2)} m/s`);
+                    u = velocity.toFixed(2);
 
-
+                    
+                }
+                
+                if (spring == null){
+                    u = 6;
+                }
                 u = 6.5;
                 
                 // angle = result.angle;
@@ -324,6 +379,13 @@
                     window.location.href = "./trajection.html";
                        }
         );
+        }
+
+        var groupContainer5 = document.getElementById("groupContainer5");
+        if (groupContainer5) {
+            groupContainer5.addEventListener("click", function (e) {
+                window.location.href = "./trajection.html";
+            });
         }
     </script>
 </body>

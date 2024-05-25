@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  href="./trajection.css" />
     <title>Projectile Motion</title>
-    <style>
-        body {
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        #plot {
-            width: 80%;
-            height: 80%;
-        }
-    </style>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <div id="plot"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>Target_of_X</th>
+                <th>Target_of_Z</th>
+                <th>Position_x</th>
+                <th>Position_Y</th>
+                <th>Position_Z</th>
+                <th>Angle</th>
+                <th>Velocity</th>
+            </tr>
+        </thead>
+        <tbody id="latest-row">
+        </tbody>
+    </table>
     <script>
         async function plotTrajectory() {
             try {
@@ -29,16 +31,54 @@
                 const data = await response.json();
                 
                 if (data && data.data) {
-                    var trace = {
-                        x: data.data.x,
-                        y: data.data.z,
-                        z: data.data.y,
+                    const x = data.data.x;
+                    const y = data.data.y;
+                    const z = data.data.z;
+                    const vx = data.data.vx; // assuming velocity components are available
+                    const vy = data.data.vy;
+                    const vz = data.data.vz;
+                    const time = data.data.time;
+
+                    const xCyan = [];
+                    const yCyan = [];
+                    const zCyan = [];
+                    const xRed = [];
+                    const yRed = [];
+                    const zRed = [];
+
+                    for (let i = 0; i < y.length; i++) {
+                        if (y[i] > 0.5) {
+                            xRed.push(x[i]);
+                            yRed.push(y[i]);
+                            zRed.push(z[i]);
+                        } else {
+                            xCyan.push(x[i]);
+                            yCyan.push(y[i]);
+                            zCyan.push(z[i]);
+                        }
+                    }
+
+                    const traceCyan = {
+                        x: xCyan,
+                        y: zCyan,
+                        z: yCyan,
                         mode: 'lines',
                         type: 'scatter3d',
-                        line: {color: 'cyan'}
+                        line: {color: 'red'},
+                        name: 'Whole-trajectory'
                     };
 
-                    var layout = {
+                    const traceRed = {
+                        x: xRed,
+                        y: zRed,
+                        z: yRed,
+                        mode: 'lines',
+                        type: 'scatter3d',
+                        line: {color: 'cyan'},
+                        name: 'Robot-trajectory'
+                    };
+
+                    const layout = {
                         scene: {
                             xaxis: {title: 'X (m)'},
                             yaxis: {title: 'Y (m)'},
@@ -47,10 +87,10 @@
                         },
                         paper_bgcolor: 'black',
                         font: {color: 'white'},
-                        title: 'Projectile Motion'
+                        title: 'Squash Projectile Motion'
                     };
 
-                    Plotly.newPlot('plot', [trace], layout);
+                    Plotly.newPlot('plot', [traceCyan, traceRed], layout);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -58,6 +98,35 @@
         }
 
         plotTrajectory();
+
+        async function updateTable() {
+            try {
+                const response = await fetch('http://localhost:8000/table');
+                const latestRow = await response.json();
+                
+                const tableBody = document.getElementById('latest-row');
+
+                // Clear existing rows
+                tableBody.innerHTML = '';
+
+                // Populate table with latest row data
+                const row = '<tr>' +
+                                '<td>' + latestRow.targetX + '</td>' +
+                                '<td>' + latestRow.targetZ + '</td>' +
+                                '<td>' + latestRow.posX + '</td>' +
+                                '<td>' + latestRow.posY + '</td>' +
+                                '<td>' + latestRow.posZ + '</td>' +
+                                '<td>' + latestRow.angle + '</td>' +
+                                '<td>' + latestRow.velocity + '</td>' +
+                            '</tr>';
+                tableBody.innerHTML += row;
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        updateTable();
     </script>
 </body>
 </html>

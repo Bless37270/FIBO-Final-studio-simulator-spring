@@ -49,10 +49,12 @@ class TrajectoryCalculator:
     
     def generate_trajectory_data(self, theta):
         time_points = np.linspace(0, self.time_to_reach_x(theta), num=500)
+        # time_points_rob 
         x_points = [self.x_position(theta, t) for t in time_points]
+        y_points_rob = [self.y_position(theta, t) for t in time_points if self.y_position(theta, t) >= 0.5]
         y_points = [self.y_position(theta, t) for t in time_points]
         z_points = [0 for t in time_points]
-        return {"x": x_points, "y": y_points,"z": z_points, "t": time_points.tolist()}
+        return {"x": x_points,"y": y_points, "y_rob": y_points_rob,"z": z_points, "t": time_points.tolist()}
 
 
 if __name__ == "__main__":
@@ -185,13 +187,14 @@ async def post_optimal_angle(data: TargetData):
             'posZ': data.posZ,
             'angle': optimal_angle1,
             'velocity': fixed_velocity1
+            # 'k': 
         }
 
         # URL to the Google Apps Script Web App
         url = 'https://script.google.com/macros/s/AKfycbxt3Z7yeXxNudrNn7WYUyG4oIkA1dp1MnYnvDCqP2INezWiGF5z7pNpH4Oi3VLadsZBTg/exec'
 
         # Making a POST request
-        print(f"data: {data}")
+        # print(f"data: {data}")
         response = requests.post(url, headers={'Content-Type': 'application/json'}, data=json.dumps(data))
 
         # # Check if the request was successful
@@ -216,6 +219,19 @@ async def post_optimal_angle(data: TargetData):
         print("No valid angle found within the specified tolerance.")
         raise HTTPException(status_code=404, detail="No valid angle found within the specified tolerance.")
 
+
+@app.get("/table")
+async def get_table():
+    # Fetch data from Google Sheets API
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    SPREADSHEET_ID = '15RY2X_TGgvw37gEl6GPtc7Eg-O-DoHT06UTzMWQjdDo'
+    DATA_TO_PULL = 'Data'
+    data = pull_sheet_data(SCOPES,SPREADSHEET_ID,DATA_TO_PULL)
+    df = pd.DataFrame(data[1:], columns=data[0])
+    latest_row = df.iloc[-1]
+    print(latest_row)
+    return latest_row
+
 @app.get("/data")
 async def get_trajectory():
     # Fetch data from Google Sheets API
@@ -225,7 +241,7 @@ async def get_trajectory():
     data = pull_sheet_data(SCOPES,SPREADSHEET_ID,DATA_TO_PULL)
     df = pd.DataFrame(data[1:], columns=data[0])
     latest_row = df.iloc[-1]
-    print(latest_row)
+    # print(latest_row)
 
     data = CoordinateRequest(
         targetX=float(latest_row['targetX']),
