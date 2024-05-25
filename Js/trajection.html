@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectile Motion</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #plot {
+            width: 80%;
+            height: 80%;
+        }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="plot"></div>
+    <script>
+        async function plotTrajectory() {
+            try {
+                const response = await fetch('http://localhost:8000/data');
+                const data = await response.json();
+                
+                if (data && data.data) {
+                    var trace = {
+                        x: data.data.x,
+                        y: data.data.z,
+                        z: data.data.y,
+                        mode: 'lines',
+                        type: 'scatter3d',
+                        line: {color: 'cyan'}
+                    };
+
+                    var layout = {
+                        scene: {
+                            xaxis: {title: 'X (m)'},
+                            yaxis: {title: 'Y (m)'},
+                            zaxis: {title: 'Z (m)'},
+                            bgcolor: 'black'
+                        },
+                        paper_bgcolor: 'black',
+                        font: {color: 'white'},
+                        title: 'Projectile Motion'
+                    };
+
+                    Plotly.newPlot('plot', [trace], layout);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        plotTrajectory();
+    </script>
+</body>
+</html>
