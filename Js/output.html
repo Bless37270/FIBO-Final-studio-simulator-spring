@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="initial-scale=1, width=device-width">
+  	
+  	<link rel="stylesheet"  href="./output.css" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@500;600&display=swap" />
+  	
+  	<script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+	<script src="coordinate-graph.js"></script>
+	<script src="Obstacle.js"></script>
+	<script src="Target.js"></script>
+	<script src="Shapes.js"></script>
+	<script src="Projectile.js"></script>
+	<script src="circle.js"></script>
+  	
+</head>
+<body>
+    <div class="macbook-pro-14-output">
+        <div id="calculator" style="width: 100%; height: 982px;"></div>
+        <div class="macbook-pro-14-output-child"></div>
+        <div class="macbook-pro-14-output-item"></div>
+        <div class="div" onclick="editNumber(this)"></div>
+
+        <div class="group-z1">
+            <div class="mm">mm</div>
+            <div class="z">z : <span class="coordinate-of-targetz1" contenteditable="true"></span></div>
+            <div class="group-z-item"></div>
+            <div class="div1"></div>
+        </div>
+        <div class="div2">*</div>
+        <div class="group-x1">
+            <div class="mm1">mm</div>
+            <div class="x">x : <span class="coordinate-of-targetx1" contenteditable="true"></span></div>
+            <div class="group-x-item"></div>
+        </div>
+        <div class="target-in-z">Target in x and z axis :</div>
+        <div class="position-of-machine-1">
+            <div class="position-of-machine-1-child"></div>
+            <div class="group-z">
+                <div class="mm2">mm</div>
+                <div class="z1">z : <span class="coordinate-of-targetz" contenteditable="true"></span></div>
+                <div class="group-z-child"></div>
+                <div class="div3"></div>
+            </div>
+            <div class="group-y">
+                <div class="mm3">mm</div>
+                <div class="y">y : <span class="coordinate-of-targety" contenteditable="true"></span></div>
+                <div class="group-y-child"></div>
+                <div class="div4"></div>
+            </div>
+            <div class="group-x2">
+                <div class="mm3">mm</div>
+                <div class="y">x : <span class="coordinate-of-targetx" contenteditable="true"></span></div>
+                <div class="group-x-child"></div>
+                <div class="div5"></div>
+            </div>
+            <div class="div6">*</div>
+        </div>
+        <div class="please-fill-in">*please fill in all required fields</div>
+        <div class="position-of-machine">Position of Machine : </div>
+        <div class="rectangle-parent" id="groupContainer3">
+            <div class="group-child"></div>
+            <div class="restart">Restart</div>
+        </div>
+        <div class="rectangle-group" id="groupContainer4">
+            <div class="group-item"></div>
+            <div class="Trajection">Trajection</div>
+        </div>
+        <div class="rectangle-container" id="groupContainer2">
+            <div class="group-inner"></div>
+            <div class="calculate">Calculate</div>
+        </div>
+        <div class="rectangle-div"></div>
+        <div class="angle-of-machine">Angle of Machine Should be: </div>
+        <div class="group-x3">
+            <div class="mm5">mm</div>
+            <div class="z">x : <span id="resultx"></span></div>
+            <div class="line-div"></div>
+            <div class="div7"> </div>
+        </div>
+        <div class="group-x4">
+            <div class="mm5">mm</div>
+            <div class="z">y : <span id="resulty"></span></div>
+            <div class="line-div"></div>
+            <div class="div8"></div>
+        </div>
+        <div class="group-x5">
+            <div class="mm5">mm</div>
+            <div class="z">z : <span id="resultz"></span></div>
+            <div class="line-div"></div>
+            <div class="div9"></div>
+        </div>
+        <div class="group-x6">
+            <div class="degree">degree</div>
+            <div class="z">Angle : <span id="resultangle"></span></div>
+            <div class="group-x-child3"></div>
+            <div class="div10"></div>
+        </div>
+        <div class="output">output :</div>
+        <div class="position-of-machine1">should be moved to the following distance: </div>
+        <div class="group-div">
+            <div class="group-child1"></div>
+            <div class="more-details">More details</div>
+        </div>
+    </div>
+
+    <script>
+        let projectile, shape, obstacle, target;
+        document.addEventListener("DOMContentLoaded", function() {
+            const elt = document.getElementById('calculator');
+            const calculator = Desmos.GraphingCalculator(elt);
+
+            // Hide expressions list directly using JavaScript
+            const expressionsList = document.querySelector('.dcg-left');
+            if (expressionsList) {
+                expressionsList.style.display = 'none';
+            }
+
+            const g = 9.81; // acceleration due to gravity (m/s^2)
+            const a = 45; // launch angle in degrees
+            const h = 0.4; // initial height (m)
+            const u = 6; // initial speed (m/s)
+
+            // Convert angle from degrees to radians
+            const angleRad = a * Math.PI / 180;
+
+            // Calculate time of flight and maximum height
+            const tFlight = 2 * u * Math.sin(angleRad) / g;
+            const maxHeight = h + (u ** 2 * Math.sin(angleRad) ** 2) / (2 * g);
+
+            // Assuming you need the X coordinate from the element with class '.coordinate-of-targetx1'
+            const targetX = document.querySelector('.coordinate-of-targetx1') ? document.querySelector('.coordinate-of-targetx1').innerText.trim() : "Default value";
+
+            // Set expressions for the projectile motion equations
+            projectile = new Projectile(calculator);
+            shape = new Shapes(calculator);
+            obstacle = new Obstacle(calculator);
+            target = new Target(calculator);
+        });
+
+    
+
+        var groupContainer2 = document.getElementById("groupContainer2");
+        if (groupContainer2) {
+            groupContainer2.addEventListener("click", function (e) {
+                // h = 0.4;
+                // u = 6;
+                // projectile.setupProjectile(50, h, u);
+                // shape.createShapes(2, 0, 0.2, 1.5);
+                // obstacle.createObstacle(1, 0, 0.2, 0.6);
+                // target.drawTargetsAndTriangles();
+                const targetX = document.querySelector('.coordinate-of-targetx1').innerText.trim();
+                const targetZ = document.querySelector('.coordinate-of-targetz1').innerText.trim();
+                const posX = document.querySelector('.coordinate-of-targetx').innerText.trim();
+                const posY = document.querySelector('.coordinate-of-targety').innerText.trim();
+                const posZ = document.querySelector('.coordinate-of-targetz').innerText.trim();
+                globalThis.angle = 0;
+                globalThis.velocity = 0;
+                console.log('targetX');
+                console.log(targetX);
+                console.log('targetZ');
+                console.log(targetZ);
+                let resultx = targetX - posX;
+                let resulty = 0 - posY;
+                let resultz = 0 - posZ;
+
+                let resultElement = document.getElementById('resultx');
+                resultElement.textContent = resultx;
+                console.log('resultx');
+                console.log(resultx);
+
+                let resultElementy = document.getElementById('resulty');
+                resultElementy.textContent = resulty;
+                let resultElementz = document.getElementById('resultz');
+                resultElementz.textContent = resultz;
+
+
+                            
+
+                // Call the async function to fetch data
+                fetchData(targetX, targetZ, posX, posY, posZ, angle, velocity);           
+         
+                // fetchData_docs(targetX, targetZ, posX, posY, posZ);
+            });
+        }
+        async function fetchData_docs(targetX, targetZ, posX, posY, posZ) {
+
+            try {
+                data = {
+                    targetX: targetX,
+                    targetZ: targetZ,
+                    posX: posX,
+                    posY: posY,
+                    posZ: posZ,
+                    angle: angle,
+                    velocity: velocity
+                };
+                // Fetch angle and velocity from FastAPI
+                const googleResponse = await fetch('https://script.google.com/macros/s/AKfycbwd4jtyCLPXNrqrF60leuUMzhovXlpPbY4-T7-jFDqj2LrNIyLVmsAXOWx1e27uCGWTkw/exec', { // Replace with your Google Apps Script Web App URL
+                    
+                    mode: 'no-cors',
+                    credentials: 'include',
+
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!googleResponse.ok) {
+                    throw new Error(`Error fetching angle and velocity: ${googleResponse.statusText}`);
+                };
+            }
+                
+
+                // Send data to Google Apps Script Web App
+                
+            catch (error) {
+                console.error('Failed to save data:', error);
+            }
+        }
+        async function fetchOptimalAngle() {
+            try {
+                const responses = await fetch('/get');
+                if (!responses.ok) {
+                    throw new Error(`HTTP error! status: ${responses.status}`);
+                }
+                const output = await responses.json();
+                document.getElementById("result").textContent = JSON.stringify(output, null, 2);
+                console.log(output);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById("result").textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function fetchData(targetX, targetZ, posX, posY, posZ, angle, velocity) {
+
+            try {
+                
+                // Fetch angle and velocity from FastAPI
+                const response = await fetch('http://localhost:8000/data', { // Replace with your FastAPI URL
+                    mode: 'cors',
+                    credentials: 'include',
+                    
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                    targetX: parseFloat(targetX),
+                    targetZ: parseFloat(targetZ),
+                    posX: parseFloat(posX),
+                    posY: parseFloat(posY),
+                    posZ: parseFloat(posZ)
+                })
+                
+                });
+                const output = await response.json();
+                console.log('Output:', output);
+
+                // Use the angle from the response
+                const optimalAngle = output.optimal_angle;
+                console.log('Optimal Angle:', optimalAngle);
+                let resultangle  =optimalAngle;
+                let resultangleElement = document.getElementById('resultangle');
+                resultangleElement.textContent = resultangle;
+                console.log('resultangle');
+                console.log(resultangle);
+                
+                        // fetchOptimalAngle();
+        
+      
+                    
+
+
+                u = 6.5;
+                
+                // angle = result.angle;
+                let h = 0.4;
+                // if (parseFloat(posZ) > 0) {
+                //     h = h+ parseFloat(posZ);
+                //     console.log('h:', h);
+
+                // projectile.setupProjectile(optimalAngle, h, u);
+                // shape.createShapes(2, 0, 0.2, 1.5);
+                // obstacle.createObstacle(1, 0, 0.2, 0.6);
+                // target.drawTargetsAndTriangles();}
+                // else {
+                h = 0.4;
+                projectile.setupProjectile(optimalAngle, h, u);
+                shape.createShapes(2, 0, 0.2, 1.5);
+                obstacle.createObstacle(1, 0, 0.2, 0.6);
+                target.drawTargetsAndTriangles();
+                // }
+                // console.log('fetching data');
+				// console.log(response);
+             
+                if (!response.ok) {
+                    throw new Error(`Error fetching angle and velocity: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Failed to save data:', error);
+            }
+        }
+
+        var groupContainer3 = document.getElementById("groupContainer3");
+        if (groupContainer3) {
+            groupContainer3.addEventListener("click", function (e) {
+            var spansToRemove = document.querySelectorAll('.group-z1 span, .group-x1 span, .group-x2 span, .group-y span, .group-z span');
+                    spansToRemove.forEach(function (span) {
+                        span.innerText = "";
+                    });
+                // Add your code here for restart button
+            });
+        }
+
+        var groupContainer4 = document.getElementById("groupContainer4");
+        if (groupContainer4) {
+            groupContainer4.addEventListener("click", async function (e) {
+                    window.location.href = "./trajection.html";
+                       }
+        );
+        }
+    </script>
+</body>
+</html>

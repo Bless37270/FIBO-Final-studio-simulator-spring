@@ -1,0 +1,92 @@
+.messageimage-1713698813764-cop-icon {
+    width: 100%;
+    position: relative;
+    left: -297px;
+    border-radius: 2px;
+    max-width: 100%;
+    overflow: hidden;
+    height: 995px;
+    object-fit: contain;
+    opacity: 0.9;
+}
+
+
+
+.macbook-pro-14-1-child {
+    position: absolute;
+    top: -94px;
+    left: 584px;
+    border-radius: 50%;
+    background: linear-gradient(233.47deg, rgba(255, 240, 202, 0.5), rgba(255, 229, 230, 0.5));
+    width: 1210px;
+    height: 1196px;
+}
+.lets-see-how {
+    position: absolute;
+    top: 695px;
+    left: 656px;
+    letter-spacing: 0.11em;
+    font-weight: 500;
+    display: inline-block;
+    width: 587px;
+    height: 53px;
+}
+.squash-machine {
+    margin: 0;
+}
+.squash-machine-simulator-container {
+    position: absolute;
+    top: 234px;
+    left: 684px;
+    font-size: 96px;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    background: linear-gradient(90deg, #a60f7c, #d4044f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: left;
+    display: inline-block;
+    width: 1149px;
+    height: 223px;
+}
+.group-child {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 20px;
+    width: 307px;
+    height: 118px;
+}
+.start {
+    position: absolute;
+    top: 4px;
+    left: 39px;
+    letter-spacing: 0.16em;
+    display: inline-block;
+    width: 228px;
+    height: 110px;
+}
+.vector-parent {
+    position: absolute;
+    top: 517px;
+    left: 684px;
+    width: 307px;
+    height: 118px;
+    mix-blend-mode: normal;
+    cursor: pointer;
+    font-size: 65px;
+    color: #ffe5e6;
+    font-family: Jaldi;
+}
+.macbook-pro-14-1 {
+    width: 100%;
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 240, 202, 0.2) 29.5%, rgba(255, 240, 202, 0)), linear-gradient(180deg, rgba(255, 244, 214, 0), #e2aed2 63.5%, rgba(246, 209, 255, 0)), linear-gradient(180deg, #ffe5e6, #e2aed2 51.5%, #ac88c6 76.5%), linear-gradient(180deg, rgba(254, 255, 243, 0), rgba(203, 199, 221, 0.07) 27%, rgba(116, 105, 184, 0.2) 72.5%);
+    height: 982px;
+    overflow: hidden;
+    text-align: center;
+    font-size: 40px;
+    color: #9a6dba;
+    font-family: Outfit;
+}
+
